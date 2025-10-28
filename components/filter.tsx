@@ -13,28 +13,29 @@ import {
 import { Search, MapPin, User } from "lucide-react";
 import { useMediaQuery } from "@mantine/hooks";
 import debounce from "lodash/debounce";
+import { Divider } from "@mantine/core";
 
 const defaultValues = {
   jobTitle: "",
   location: "",
   jobType: "",
-  salaryRange: [50000, 150000] as [number, number],
+  salaryRange: [20000, 300000] as [number, number],
 };
 
 type FormValues = typeof defaultValues;
 
 const JOB_TYPE_DATA = [
-  { value: "full-time", label: "Full-time" },
-  { value: "part-time", label: "Part-time" },
-  { value: "contract", label: "Contract" },
-  { value: "internship", label: "Internship" },
+  { value: "FULL_TIME", label: "Full-time" },
+  { value: "PART_TIME", label: "Part-time" },
+  { value: "CONTRACT", label: "Contract" },
+  { value: "INTERNSHIP", label: "Internship" },
 ];
 
 interface FilterProps {
-  onFilterSubmit?: (data: FormValues) => void;
+  setFilters?: (data: FormValues) => void;
 }
 
-const Filter = ({ onFilterSubmit }: FilterProps) => {
+const Filter = ({ setFilters }: FilterProps) => {
   const { control, watch } = useForm<FormValues>({ defaultValues });
   const salaryRangeValue = watch("salaryRange");
   const jobTitle = watch("jobTitle");
@@ -48,9 +49,9 @@ const Filter = ({ onFilterSubmit }: FilterProps) => {
   const debouncedFilter = useMemo(
     () =>
       debounce((data: FormValues) => {
-        onFilterSubmit?.(data);
+        setFilters?.(data);
       }, 500),
-    [onFilterSubmit]
+    [setFilters]
   );
 
   // Trigger filter when fields change
@@ -89,12 +90,7 @@ const Filter = ({ onFilterSubmit }: FilterProps) => {
             control={control}
             render={({ field }) => (
               <TextInput
-                styles={{
-                  input: {
-                    border: "none",
-                    boxShadow: "none",
-                  },
-                }}
+                styles={{ input: { border: "none", boxShadow: "none" } }}
                 {...field}
                 placeholder="Search By Job Title, Role"
                 leftSection={<Search size={16} />}
@@ -102,6 +98,8 @@ const Filter = ({ onFilterSubmit }: FilterProps) => {
             )}
           />
         </Box>
+
+        {!smallScreen && <Divider orientation="vertical" color="#EAEAEA"/>}
 
         {/* Location */}
         <Box style={{ flex: 1, minWidth: "250px" }}>
@@ -111,18 +109,15 @@ const Filter = ({ onFilterSubmit }: FilterProps) => {
             render={({ field }) => (
               <TextInput
                 {...field}
-                styles={{
-                  input: {
-                    border: "none",
-                    boxShadow: "none",
-                  },
-                }}
+                styles={{ input: { border: "none", boxShadow: "none" } }}
                 placeholder="Preferred Location"
                 leftSection={<MapPin size={16} />}
               />
             )}
           />
         </Box>
+
+        {!smallScreen && <Divider orientation="vertical" color="#EAEAEA"/>}
 
         {/* Job Type */}
         <Box style={{ flex: 1, minWidth: "250px" }}>
@@ -136,14 +131,8 @@ const Filter = ({ onFilterSubmit }: FilterProps) => {
                 clearable
                 placeholder="Job Type"
                 styles={{
-                  input: {
-                    border: "none",
-                    boxShadow: "none",
-                  },
-                  wrapper: {
-                    border: "none",
-                    boxShadow: "none",
-                  },
+                  input: { border: "none", boxShadow: "none" },
+                  wrapper: { border: "none", boxShadow: "none" },
                 }}
                 onChange={(val) => field.onChange(val ?? "")}
                 leftSection={<User size={16} />}
@@ -151,6 +140,8 @@ const Filter = ({ onFilterSubmit }: FilterProps) => {
             )}
           />
         </Box>
+
+        {!smallScreen && <Divider orientation="vertical" color="#EAEAEA"/>}
 
         {/* Salary Range */}
         <Box style={{ flex: 1, minWidth: "250px" }}>

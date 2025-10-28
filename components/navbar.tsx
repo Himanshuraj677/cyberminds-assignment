@@ -4,10 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@mantine/core";
 import { useState } from "react";
-import { IconMenu2, IconX } from "@tabler/icons-react";
+import { X, Menu } from "lucide-react";
+import CreateJobForm from "./jobForm";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [modalOpened, setModalOpened] = useState(false);
 
   const links = [
     { href: "/", label: "Home" },
@@ -17,13 +19,17 @@ const Navbar = () => {
     { href: "testimonials", label: "Testimonials" },
   ];
 
+
+  const openModal = () => setModalOpened(true);
+  const closeModal = () => setModalOpened(false);
+
   return (
     <header className="w-full py-4 sticky top-0 z-50">
       {/* navbar for mobile devices */}
       <div className="md:hidden flex items-center justify-between px-4">
         <Image src="/assets/logo.svg" alt="logo" width={32} height={32} />
         <button onClick={() => setMobileOpen(!mobileOpen)} className="cursor-pointer">
-          {mobileOpen ? <IconX size={24} /> : <IconMenu2 size={24} />}
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
@@ -41,6 +47,7 @@ const Navbar = () => {
             gradient={{ from: "#A128FF", to: "#6100AD", deg: 134 }}
             radius="xl"
             fullWidth
+            onClick={openModal}
           >
             Create Jobs
           </Button>
@@ -63,10 +70,16 @@ const Navbar = () => {
           variant="gradient"
           gradient={{ from: "#A128FF", to: "#6100AD", deg: 134 }}
           radius="xl"
+          onClick={openModal}
         >
           Create Jobs
         </Button>
       </div>
+
+      <CreateJobForm
+        opened={modalOpened}
+        onClose={closeModal}
+      />
     </header>
   );
 };
