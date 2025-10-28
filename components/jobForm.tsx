@@ -14,6 +14,7 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { IconChevronDown, IconCalendar } from "@tabler/icons-react";
+import { toast } from "react-toastify";
 
 // Define the form structure (can be extended with Zod for validation)
 const defaultValues = {
@@ -39,7 +40,7 @@ const CreateJobForm = ({ opened, onClose }) => {
     defaultValues: defaultValues,
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("Job Creation Data Submitted:", data);
     try {
       const payload = {
@@ -52,7 +53,7 @@ const CreateJobForm = ({ opened, onClose }) => {
         description: data.jobDescription,
         deadline: data.applicationDeadline,
       };
-      const response = fetch(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/jobs`,
         {
           method: "POST",
@@ -62,7 +63,17 @@ const CreateJobForm = ({ opened, onClose }) => {
           body: JSON.stringify(payload),
         }
       );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Error details:", errorData);
+        toast.error(
+          errorData.message || "Failed to create job. Please try again."
+        );
+        return;
+      }
+      toast.success("Job created successfully!");
     } catch (error) {
+      toast.error("Failed to create job. Please try again.");
       console.error("Error creating job:", error);
     }
     reset();

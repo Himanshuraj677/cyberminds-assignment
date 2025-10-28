@@ -8,6 +8,7 @@ import {
 import "./globals.css";
 import "@mantine/core/styles.css";
 import Navbar from "@/components/navbar";
+import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
         <MantineProvider>
           <Navbar />
           {children}
+          <ToastContainer />
         </MantineProvider>
       </body>
     </html>
