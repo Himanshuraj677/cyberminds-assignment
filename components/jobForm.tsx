@@ -28,17 +28,10 @@ const defaultValues = {
 };
 
 const JOB_TYPE_DATA = [
-  { value: "FullTime", label: "Full-Time" },
-  { value: "PartTime", label: "Part-Time" },
-  { value: "Contract", label: "Contract" },
-  { value: "Internship", label: "Internship" },
-];
-
-const LOCATION_DATA = [
-  { value: "remote", label: "Remote" },
-  { value: "onsite", label: "Onsite" },
-  { value: "hybrid", label: "Hybrid" },
-  // Add more specific locations as needed
+  { value: "FULL_TIME", label: "Full-Time" },
+  { value: "PART_TIME", label: "Part-Time" },
+  { value: "CONTRACT", label: "Contract" },
+  { value: "INTERNSHIP", label: "Internship" },
 ];
 
 const CreateJobForm = ({ opened, onClose }) => {
@@ -48,8 +41,30 @@ const CreateJobForm = ({ opened, onClose }) => {
 
   const onSubmit = (data) => {
     console.log("Job Creation Data Submitted:", data);
-    // 1. Logic to save/publish the job (e.g., API call)
-    // 2. Close the modal and reset the form
+    try {
+      const payload = {
+        title: data.jobTitle,
+        company: data.companyName,
+        location: data.location,
+        jobType: data.jobType,
+        minSalary: data.minSalary,
+        maxSalary: data.maxSalary,
+        description: data.jobDescription,
+        deadline: data.applicationDeadline,
+      };
+      const response = fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/jobs`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+    } catch (error) {
+      console.error("Error creating job:", error);
+    }
     reset();
     onClose();
   };
@@ -122,15 +137,12 @@ const CreateJobForm = ({ opened, onClose }) => {
               control={control}
               rules={{ required: "Location is required" }}
               render={({ field, fieldState }) => (
-                <Select
+                <TextInput
                   {...field}
                   label="Location"
-                  placeholder="Choose Preferred Location"
-                  data={LOCATION_DATA}
+                  placeholder="Select Preferred Location"
                   error={fieldState.error?.message}
                   required
-                  rightSection={<IconChevronDown size={14} />}
-                  rightSectionPointerEvents="none"
                 />
               )}
             />
@@ -158,7 +170,7 @@ const CreateJobForm = ({ opened, onClose }) => {
           </Grid.Col>
 
           {/* Salary Range */}
-          <Grid.Col span={{ base: 12, sm: 12 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <Title order={5} fw={500} mb={5}>
               Salary Range
             </Title>
@@ -197,7 +209,7 @@ const CreateJobForm = ({ opened, onClose }) => {
           </Grid.Col>
 
           {/* Application Deadline */}
-          <Grid.Col span={{ base: 12, sm: 12 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <Controller
               name="applicationDeadline"
               control={control}
@@ -207,10 +219,14 @@ const CreateJobForm = ({ opened, onClose }) => {
                   {...field}
                   label="Application Deadline"
                   placeholder="Select deadline"
-                  icon={<IconCalendar size={18} stroke={1.5} />}
+                  leftSection={<IconCalendar size={18} stroke={1.5} />}
                   error={fieldState.error?.message}
                   required
                   onChange={field.onChange}
+                  popoverProps={{
+                    withinPortal: true,
+                    zIndex: 9999,
+                  }}
                 />
               )}
             />
